@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using Microsoft.Web.WebView2.Core;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,7 +20,6 @@ namespace Secrown
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ICommand LockCommand { get; private set; }
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -42,6 +43,8 @@ namespace Secrown
         public MainWindow()
         {
             InitializeComponent();
+            InitializeWebViewZalo();
+            InitializeWebViewMessenger();
         }
         #region SetWindowDisplayAffinity
         [DllImport("user32.dll")]
@@ -51,7 +54,7 @@ namespace Secrown
         private const uint WDA_MONITOR = 0x00000001;
         private const uint WDA_EXCLUDEFROMCAPTURE = 0x00000011;
 
-        private void ExcludeFromCapture()
+        private void ExcludeWindowFromCapture()
         {
             var hwnd = new WindowInteropHelper(this).Handle;
             SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE);
@@ -60,7 +63,34 @@ namespace Secrown
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ExcludeFromCapture();
+            ExcludeWindowFromCapture();
+        }
+        #region WebView2
+        private async void InitializeWebViewZalo()
+        {
+            await WebViewZalo.EnsureCoreWebView2Async();
+            WebViewZalo.CoreWebView2.PermissionRequested += CoreWebView2_PermissionRequested;
+            WebViewZalo.Source = new Uri("https://chat.zalo.me/");
+        }
+
+        private async void InitializeWebViewMessenger()
+        {
+            await WebViewMessenger.EnsureCoreWebView2Async();
+            WebViewMessenger.CoreWebView2.PermissionRequested += CoreWebView2_PermissionRequested;
+            WebViewMessenger.Source = new Uri("https://messenger.com/");
+        }
+
+        #endregion
+        private void CoreWebView2_PermissionRequested(object? sender, CoreWebView2PermissionRequestedEventArgs e)
+        {
+            if(e.PermissionKind == CoreWebView2PermissionKind.Notifications)
+            {
+                e.State = CoreWebView2PermissionState.Allow;
+            }
+            else
+            {
+                e.State = CoreWebView2PermissionState.Deny;
+            }
         }
     }
 }
