@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Secrown"
         xmlns:shell="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
         DataContext="{StaticResource MainWindow}"
         Title="MainWindow" Height="768" Width="1366" 
@@ -138,6 +139,16 @@
         </Style>
     </Window.Resources>
     <Grid Background="#FFFFFF">
-        
+        <Grid x:Name="LockGrid" Background="#80000000" Grid.RowSpan="2" Visibility="{Binding IsLock, Converter={StaticResource BooleanToVisibility}}">
+            <TextBlock Text="Locked" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"/>
+        </Grid>
+        <TabControl Visibility="{Binding IsUnlock, Converter={StaticResource BooleanToVisibility}}">
+            <TabItem x:Name="TabZalo" Header="Zalo" Padding="14,2">
+                <wv2:WebView2 x:Name="WebViewZalo"/>
+            </TabItem>
+            <TabItem x:Name="Messenger" Header="Messenger" Padding="14,2">
+                <wv2:WebView2 x:Name="WebViewMessenger"/>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
