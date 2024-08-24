@@ -4,9 +4,137 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Secrown"
+        xmlns:shell="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
         mc:Ignorable="d"
-        Title="MainWindow" Height="768" Width="1366" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="False">
-    <Grid>
-
+        Title="MainWindow" Height="768" Width="1366" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="False" Style="{DynamicResource WindowTemplate}">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome
+            ResizeBorderThickness="5"
+            CaptionHeight="30"
+            CornerRadius="0,0,0,0"
+            GlassFrameThickness="0">
+        </shell:WindowChrome>
+    </shell:WindowChrome.WindowChrome>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="Minimize_Executed"/>
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="Maximize_Executed"/>
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="Restore_Executed"/>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="Close_Executed"/>
+    </Window.CommandBindings>
+    <Window.Resources>
+        <Style x:Key="TitleBarGeneralButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="LayoutRoot" Background="Transparent" Width="44" Height="30">
+                            <TextBlock x:Name="Text" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" 
+                                   FontSize="{TemplateBinding FontSize}" Padding="{TemplateBinding Padding}" 
+                                   Foreground="#818183" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                   RenderOptions.ClearTypeHint="Auto" TextOptions.TextRenderingMode="Aliased" TextOptions.TextFormattingMode="Display"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="LayoutRoot" Property="Background" Value="#E5E5E5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TitleBarCloseButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="LayoutRoot" Background="Transparent" Width="44" Height="30">
+                            <TextBlock x:Name="Text" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" 
+                                   FontSize="{TemplateBinding FontSize}" Padding="{TemplateBinding Padding}" 
+                                   Foreground="#818183" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                   RenderOptions.ClearTypeHint="Auto" TextOptions.TextRenderingMode="Aliased" TextOptions.TextFormattingMode="Display"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="LayoutRoot" Property="Background" Value="#E50914"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="NormalButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#03A5F0"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style x:Key="WindowTemplate" TargetType="Window">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Window">
+                        <Grid>
+                            <Border x:Name="WindowBorder" BorderBrush="#000000" BorderThickness="1,0,1,1">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=WindowState}" Value="Maximized">
+                                                <Setter Property="Padding" Value="6"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid x:Name="LayoutRoot">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid x:Name="TitleBar" Grid.Row="0" Background="#2d2d30">
+                                        <TextBlock Text="Secrown" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="#f1f1f1"/>
+                                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                            <Button x:Name="LockButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE72E;" Command="{Binding LockCommand}" ToolTip="Lock" Style="{StaticResource TitleBarGeneralButtonStyle}"/>
+                                            <Button x:Name="MinimizeButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE921;" Command="{x:Static SystemCommands.MinimizeWindowCommand}" ToolTip="Minimize" Style="{StaticResource TitleBarGeneralButtonStyle}"/>
+                                            <Button x:Name="MaximizeButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE922;" Command="{x:Static SystemCommands.MaximizeWindowCommand}" ToolTip="Maximize">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource TitleBarGeneralButtonStyle}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=WindowState}" Value="Maximized">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=WindowState}" Value="Normal">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                            <Button x:Name="RestoreButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE923;" Command="{x:Static SystemCommands.RestoreWindowCommand}" ToolTip="Restore">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource TitleBarGeneralButtonStyle}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=WindowState}" Value="Maximized">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=WindowState}" Value="Normal">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                            <Button x:Name="CloseButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE106;" Command="{x:Static SystemCommands.CloseWindowCommand}" ToolTip="Close" Style="{StaticResource TitleBarCloseButtonStyle}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Grid.Row="1">
+                                        <AdornerDecorator>
+                                            <ContentPresenter/>
+                                        </AdornerDecorator>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#FFFFFF">
+        
     </Grid>
 </Window>
