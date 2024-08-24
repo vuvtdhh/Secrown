@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Secrown.ViewModels
 {
-    internal class MainWindow
+    public class MainWindow
     {
     }
 }
