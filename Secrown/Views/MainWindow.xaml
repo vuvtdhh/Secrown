@@ -90,7 +90,8 @@
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
                                     <Grid x:Name="TitleBar" Grid.Row="0" Background="{StaticResource SemiBlack}">
-                                        <TextBlock Text="Secrown" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="{StaticResource LightGray}"/>
+                                        <Image Source="/Assets/Icons/crown.ico" Width="20" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,10,2"/>
+                                        <TextBlock Text="Secrown" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="40,0,0,0" Foreground="{StaticResource LightGray}"/>
                                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                             <Button x:Name="LockButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE72E;" Command="{Binding LockCommand}" ToolTip="Lock" Style="{StaticResource TitleBarGeneralButtonStyle}"/>
                                             <Button x:Name="MinimizeButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE921;" Command="{x:Static SystemCommands.MinimizeWindowCommand}" ToolTip="Minimize" Style="{StaticResource TitleBarGeneralButtonStyle}"/>
