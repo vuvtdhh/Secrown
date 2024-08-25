@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Secrown
 {
@@ -40,9 +41,12 @@ namespace Secrown
         {
             SystemCommands.CloseWindow(this);
         }
+        public string UserDataFolder { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+            string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            UserDataFolder = System.IO.Path.Combine(currentDirectory, "WebData");
             InitializeWebViewZalo();
             InitializeWebViewMessenger();
         }
@@ -68,14 +72,16 @@ namespace Secrown
         #region WebView2
         private async void InitializeWebViewZalo()
         {
-            await WebViewZalo.EnsureCoreWebView2Async();
+            var environment = await CoreWebView2Environment.CreateAsync(userDataFolder: UserDataFolder);
+            await WebViewZalo.EnsureCoreWebView2Async(environment);
             WebViewZalo.CoreWebView2.PermissionRequested += CoreWebView2_PermissionRequested;
             WebViewZalo.Source = new Uri("https://chat.zalo.me/");
         }
 
         private async void InitializeWebViewMessenger()
         {
-            await WebViewMessenger.EnsureCoreWebView2Async();
+            var environment = await CoreWebView2Environment.CreateAsync(userDataFolder: UserDataFolder);
+            await WebViewMessenger.EnsureCoreWebView2Async(environment);
             WebViewMessenger.CoreWebView2.PermissionRequested += CoreWebView2_PermissionRequested;
             WebViewMessenger.Source = new Uri("https://messenger.com/");
         }
@@ -90,6 +96,18 @@ namespace Secrown
             else
             {
                 e.State = CoreWebView2PermissionState.Deny;
+            }
+        }
+
+        private void LockGrid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // For case FocusManager.FocusedElement can not work correctly.
+            if (LockGrid.Visibility == Visibility.Visible)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    PasswordBoxPassCode.Focus();
+                }), System.Windows.Threading.DispatcherPriority.Render);
             }
         }
     }
