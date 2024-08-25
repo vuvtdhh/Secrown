@@ -141,7 +141,8 @@
         </Style>
     </Window.Resources>
     <Grid Background="White">
-        <Grid x:Name="LockGrid" Background="White" FocusManager.FocusedElement="{Binding ElementName=PasswordBoxPassCode}" Visibility="{Binding IsLock, Converter={StaticResource BooleanToVisibility}}" IsVisibleChanged="LockGrid_IsVisibleChanged">
+        <!--FocusManager.FocusedElement="{Binding ElementName=PasswordBoxPassCode}"-->
+        <Grid x:Name="LockGrid" Background="White" Visibility="{Binding IsLock, Converter={StaticResource BooleanToVisibility}}" IsVisibleChanged="LockGrid_IsVisibleChanged">
             <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
