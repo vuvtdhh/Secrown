@@ -65,8 +65,8 @@
             </Setter>
         </Style>
         <Style x:Key="NormalButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#03A5F0"/>
-            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="Background" Value="{StaticResource LightBlue}"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
         <Style x:Key="WindowTemplate" TargetType="Window">
@@ -74,7 +74,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Window">
                         <Grid>
-                            <Border x:Name="WindowBorder" BorderBrush="#000000" BorderThickness="1,0,1,1">
+                            <Border x:Name="WindowBorder">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Style.Triggers>
@@ -89,8 +89,8 @@
                                         <RowDefinition Height="30"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
-                                    <Grid x:Name="TitleBar" Grid.Row="0" Background="#2d2d30">
-                                        <TextBlock Text="Secrown" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="#f1f1f1"/>
+                                    <Grid x:Name="TitleBar" Grid.Row="0" Background="{StaticResource SemiBlack}">
+                                        <TextBlock Text="Secrown" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Foreground="{StaticResource LightGray}"/>
                                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                             <Button x:Name="LockButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE72E;" Command="{Binding LockCommand}" ToolTip="Lock" Style="{StaticResource TitleBarGeneralButtonStyle}"/>
                                             <Button x:Name="MinimizeButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE921;" Command="{x:Static SystemCommands.MinimizeWindowCommand}" ToolTip="Minimize" Style="{StaticResource TitleBarGeneralButtonStyle}"/>
@@ -125,11 +125,13 @@
                                             <Button x:Name="CloseButton" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="10" Content="&#xE106;" Command="{x:Static SystemCommands.CloseWindowCommand}" ToolTip="Close" Style="{StaticResource TitleBarCloseButtonStyle}"/>
                                         </StackPanel>
                                     </Grid>
-                                    <Grid Grid.Row="1">
-                                        <AdornerDecorator>
-                                            <ContentPresenter/>
-                                        </AdornerDecorator>
-                                    </Grid>
+                                    <Border Grid.Row="1" BorderBrush="{StaticResource SemiBlack}" BorderThickness="1,0,1,1">
+                                        <Grid >
+                                            <AdornerDecorator>
+                                                <ContentPresenter/>
+                                            </AdornerDecorator>
+                                        </Grid>
+                                    </Border>
                                 </Grid>
                             </Border>
                         </Grid>
@@ -138,11 +140,77 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Background="#FFFFFF">
-        <Grid x:Name="LockGrid" Background="#80000000" Grid.RowSpan="2" Visibility="{Binding IsLock, Converter={StaticResource BooleanToVisibility}}">
-            <TextBlock Text="Locked" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"/>
+    <Grid Background="White">
+        <Grid x:Name="LockGrid" Background="White" FocusManager.FocusedElement="{Binding ElementName=PasswordBoxPassCode}" Visibility="{Binding IsLock, Converter={StaticResource BooleanToVisibility}}" IsVisibleChanged="LockGrid_IsVisibleChanged">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <PasswordBox x:Name="PasswordBoxPassCode" Grid.Column="0" VerticalContentAlignment="Center" Width="150" Height="30" FontSize="14" Margin="0,0,2,0" Focusable="True">
+                    <PasswordBox.Style>
+                        <Style TargetType="{x:Type PasswordBox}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type PasswordBox}">
+                                        <Border x:Name="PasswordBoxBorder" CornerRadius="5,0,0,5" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                                            <ScrollViewer x:Name="PART_ContentHost" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" TargetName="PasswordBoxBorder" Value="0.5"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="BorderBrush" TargetName="PasswordBoxBorder" Value="{StaticResource Blue}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                                <Setter Property="BorderBrush" TargetName="PasswordBoxBorder" Value="{StaticResource DarkBlue}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                                        <Condition Property="IsSelectionActive" Value="false"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                                </MultiTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </PasswordBox.Style>
+                </PasswordBox>
+                <Button x:Name="ButtonUnLock" Grid.Column="1" Width="75" Height="30" Content="Unlock" Background="{StaticResource LightBlue}" Foreground="White" BorderThickness="0">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border x:Name="ButtonUnLockBorder" CornerRadius="0,5,5,0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Cursor="Hand">
+                                            <ContentPresenter x:Name="ButtonContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" TargetName="ButtonUnLockBorder" Value="0.5"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" TargetName="ButtonUnLockBorder" Value="{StaticResource Blue}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                                <Setter Property="Background" TargetName="ButtonUnLockBorder" Value="{StaticResource DarkBlue}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
         </Grid>
-        <TabControl Visibility="{Binding IsUnlock, Converter={StaticResource BooleanToVisibility}}">
+        <TabControl Visibility="{Binding IsUnlock, Converter={StaticResource BooleanToVisibility}}" BorderThickness="0">
             <TabItem x:Name="TabZalo" Header="Zalo" Padding="14,2">
                 <wv2:WebView2 x:Name="WebViewZalo"/>
             </TabItem>
