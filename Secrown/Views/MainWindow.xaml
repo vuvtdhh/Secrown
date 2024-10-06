@@ -8,15 +8,15 @@
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
         DataContext="{StaticResource MainWindow}"
-        Title="MainWindow" Height="768" Width="1366" 
+        Title="Secrown" Height="768" Width="1366" 
         WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="False" 
         Style="{DynamicResource WindowTemplate}" Loaded="Window_Loaded">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome
             ResizeBorderThickness="5"
             CaptionHeight="30"
-            CornerRadius="0,0,0,0"
-            GlassFrameThickness="0">
+            CornerRadius="20"
+            GlassFrameThickness="1">
         </shell:WindowChrome>
     </shell:WindowChrome.WindowChrome>
     <Window.CommandBindings>
